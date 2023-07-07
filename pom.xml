@@ -1,0 +1,145 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ar.com.rgp</groupId>
+    <artifactId>Firmador</artifactId>
+    <version>1.0.4.5</version>
+    <name>Firmado RGP</name>
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <outputDirectory>classes</outputDirectory>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <excludes>
+                    <exclude>**/*java</exclude>
+                    <exclude>**/*SVN</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>True</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Build>${buildNumber}</Implementation-Build>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <repositories>
+        <repository>
+            <id>maven-eclipse-repo</id>
+            <url>http://maven-eclipse.github.io/maven</url>
+        </repository>
+    </repositories>
+
+    <properties>
+        <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+
+        <swt.version>4.5.2</swt.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.jersey.connectors</groupId>
+            <artifactId>jersey-apache-connector</artifactId>
+            <version>2.25.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>2.25.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+            <version>2.25.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+            <version>2.25.1</version>
+        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.glassfish.jersey.ext</groupId> -->
+<!--             <artifactId>jersey-spring3</artifactId> -->
+<!--             <version>2.25.1</version> -->
+<!--         </dependency> -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>2.25.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.icepdf.os</groupId>
+            <artifactId>icepdf-core</artifactId>
+            <version>6.2.2</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>com.sun.media</artifactId>
+                    <groupId>jai_imageio</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.media</groupId>
+                    <artifactId>jai_core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.icepdf.os</groupId>
+            <artifactId>icepdf-viewer</artifactId>
+            <version>6.2.2</version>
+        </dependency>
+
+
+        <!-- <dependency> -->
+        <!-- <groupId>org.eclipse.swt</groupId> -->
+        <!-- <artifactId>org.eclipse.swt.win32.win32.x86</artifactId> -->
+        <!-- <version>${swt.version}</version> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.eclipse.swt</groupId> -->
+        <!-- <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId> -->
+        <!-- <version>${swt.version}</version> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.eclipse.swt</groupId> -->
+        <!-- <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId> -->
+        <!-- <version>${swt.version}</version> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.eclipse.swt</groupId> -->
+        <!-- <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId> -->
+        <!-- <version>${swt.version}</version> -->
+        <!-- </dependency> -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.eclipse.swt</groupId> -->
+        <!-- <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId> -->
+        <!-- <version>${swt.version}</version> -->
+        <!-- </dependency> -->
+    </dependencies>
+</project>
