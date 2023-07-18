@@ -34,6 +34,9 @@ public class AccionesFirmador {
 	}
 
 	protected byte[] procesarFirma(String user, String token, String trmId) throws Exception {
+
+		user = user.replace("\"","");
+
 		if (debug)
 			System.out.println("--------- ProcesarFirma");
 		if (debug)
@@ -79,7 +82,7 @@ public class AccionesFirmador {
 			//DESCOMENTAR FIN
 
 			//TRY JUAN
-			Path path = Paths.get("C:\\Users\\jguzm\\Downloads\\exampleNOFirmado.pdf");
+			Path path = Paths.get("C:\\Users\\jguzm\\Downloads\\EjemploNoFirmado.pdf");
 			byt = Files.readAllBytes(path);
 			//END TRY
 
@@ -95,7 +98,7 @@ public class AccionesFirmador {
 			//DESCOMENTAR FIN
 
 			String outputPath = "C:\\Users\\jguzm\\Downloads\\";
-			String outputFileName = "pruebaFirmaVisible.pdf";
+			String outputFileName = "pruebaCicloCompletoFirmaVisible.pdf";
 
 			try(FileOutputStream fos = new FileOutputStream(outputPath+outputFileName))
 			{

@@ -17,7 +17,7 @@ public class ClientActions
 
         try
         {
-            socket = new Socket("localhost",2022);
+            socket = new Socket("localhost",9678);
             System.out.println("CONEXION ESTABLECIDA CON SERVIDOR\n");
 
             inputStreamReader = new InputStreamReader(socket.getInputStream());

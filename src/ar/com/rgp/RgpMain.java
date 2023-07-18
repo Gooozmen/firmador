@@ -9,10 +9,7 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
 import java.lang.reflect.Field;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -31,88 +28,43 @@ public class RgpMain {
 		charset.setAccessible(true);
 		charset.set(null,null);
 
-
-		//test JUAN FIRMAR EXITOSO
 		/*
+		try {
+			SocketServer socketServer = new SocketServer();
+			socketServer.StartServer();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		*/
+
+		/*test JUAN FIRMAR EXITOSO
 		AccionesFirmador acciones = new AccionesFirmador();
 		try {
 			acciones.procesarFirma("DEBANNE DIEGO OSCAR", "token", "101092109");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		*/
-		//END TEST
-
-
-		//TEST SERVIDOR ACTIVO
-
-		Socket socket = null;
-
-		InputStreamReader inputStream;
-		OutputStreamWriter outputStream;
-		BufferedReader bufferedReader = null;
-		BufferedWriter bufferedWriter = null;
-		ServerSocket serverSocket = null;
-
-		try
-		{
-			System.out.println("SERVIDOR DISPONIBLE\n");
-			serverSocket = new ServerSocket(2022);
-
-			socket = serverSocket.accept();
-			System.out.println("CLIENTE ESTABLECIO CONEXION\n");
-
-			inputStream = new InputStreamReader(socket.getInputStream());
-			outputStream = new OutputStreamWriter(socket.getOutputStream());
-			bufferedReader = new BufferedReader(inputStream);
-			bufferedWriter = new BufferedWriter(outputStream);
-
-
-			while(true)
-			{
-				String mensajeFromClient = bufferedReader.readLine();
-
-				System.out.println("message from client: "+ mensajeFromClient + "\n");
-
-				bufferedWriter.write("message receuved");
-				bufferedWriter.newLine();
-				bufferedWriter.flush();
-
-				if(mensajeFromClient == null)
-				{
-					System.out.println("mensaje nulo");
-					break;
-				}
-			}
-
-			socket.close();
-			inputStream.close();
-			outputStream.close();
-			bufferedReader.close();
-			bufferedWriter.close();
-
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-
+		END TEST*/
 
 		//REGION COMENTADA
-		//try {
-		//	if (args != null && args.length >= 1 && (args[0].equals("NO_USER"))) {
-		//		RgpMain.testUser = true;
-		//	}
 
-		//	setBarIcons();
+		try {
+			if (args != null && args.length >= 1 && (args[0].equals("NO_USER"))) {
+				RgpMain.testUser = true;
+			}
 
-		//	WebSocketServer server = new WebSocketServer();
-		//	server.start();
-		//} catch (Exception e) {
-		//	e.printStackTrace();
-		//}
+			setBarIcons();
+
+			WebSocketServer server = new WebSocketServer();
+			server.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
-	 protected static Image createImage(String path, String description) {
+ 	protected static Image createImage(String path, String description) {
 	        URL imageURL = RgpMain.class.getResource(path);
 	         
 	        if (imageURL == null) {
@@ -153,7 +105,6 @@ public class RgpMain {
             System.out.println("TrayIcon could not be added.");
         }
 	}
-	
 	public static void showTaskBarMessage(String titulo, String message, MessageType type) {
         trayIcon.displayMessage(titulo, message, type);
 	}

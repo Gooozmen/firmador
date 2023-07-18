@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
@@ -35,9 +36,11 @@ public class WebSocketServer {
 
 		int portNumber = 9678;
 
+
 		try
 		{
 			server = new ServerSocket(portNumber);
+			System.out.println("servidor activo");
 		}
 		catch (IOException exception)
 		{
@@ -83,6 +86,7 @@ public class WebSocketServer {
 				throw new IllegalStateException("Could not connect to client input stream", inputStreamException);
 			}
 
+
 			try
 			{
 				doHandShakeToInitializeWebSocketConnection(inputStream, outputStream);
@@ -91,6 +95,7 @@ public class WebSocketServer {
 			{
 				throw new IllegalStateException("Could not connect to client input stream", handShakeException);
 			}
+
 
 			try
 			{
@@ -163,19 +168,23 @@ public class WebSocketServer {
 		}
 	}
 	private void printInputStream(InputStream inputStream) throws IOException {
-		int len = 0;
-		byte[] b = new byte[4024];
-		// rawIn is a Socket.getInputStream();
+
+		int bytesRead = 0;
+		byte[] buffer= new byte[4024];
 		boolean isFirst = true;
-		// while (isFirst) {
-		len = inputStream.read(b);
-		if (len != -1) {
+
+		bytesRead = inputStream.read(buffer);
+
+		System.out.println(bytesRead);
+		System.out.println(inputStream.toString());
+
+		if (bytesRead != -1) {
 
 			byte rLength = 0;
 			int rMaskIndex = 2;
 			int rDataStart = 0;
 			// b[0] is always text in my case so no need to check;
-			byte data = b[1];
+			byte data = buffer[1];
 			byte op = (byte) 127;
 			rLength = (byte) (data & op);
 
@@ -189,27 +198,36 @@ public class WebSocketServer {
 			int j = 0;
 			int i = 0;
 			for (i = rMaskIndex; i < (rMaskIndex + 4); i++) {
-				masks[j] = b[i];
+				masks[j] = buffer[i];
 				j++;
 			}
 
 			rDataStart = rMaskIndex + 4;
 
-			int messLen = len - rDataStart;
+			int messLen = bytesRead - rDataStart;
 
 			byte[] message = new byte[messLen];
 
-			for (i = rDataStart, j = 0; i < len; i++, j++) {
-				message[j] = (byte) (b[i] ^ masks[j % 4]);
+			for (i = rDataStart, j = 0; i < bytesRead; i++, j++) {
+				message[j] = (byte) (buffer[i] ^ masks[j % 4]);
 			}
+
+
+			// Convert bytes to string using the appropriate encoding
+			String receivedString = new String(message, "UTF-8");
+
+			// Print the string
+			System.out.println("TEST FRONT: "+receivedString);
 
 			System.out.println(new String(message));
 			AccionesFirmador acciones = new AccionesFirmador();
 			try {
 				String mensaje = new String (message);
 				String args[]=mensaje.split("-##-");
-				
-				String protocol=args[3];
+
+				System.out.println("ENTRANDO A FIRMAR");
+
+				/*String protocol=args[3];
 				String puerto="80";
 				if (args.length>5 && !args[5].trim().equalsIgnoreCase("") && !args[5].trim().equalsIgnoreCase("0")) {
 					puerto = args[5];
@@ -219,10 +237,10 @@ public class WebSocketServer {
 						puerto = "443";
 				}
 
-				// puerto = "7001";
 
 				WebSocketServer.backendHOST = args[3]+"//"+args[4]+":"+puerto+"/rgp-web/api/";
 				WebSocketServer.updateUrl = args[3]+"//"+args[4]+":"+puerto+"/firmador/";
+
 
 				// Verifica la primera vez que se conecta si hay actualizaciones o cuando el número de firmas sea igual al definido por checkUpdateAfter
 				if (numeroFirma==0 || numeroFirma<this.checkUpdateAfter)
@@ -238,8 +256,9 @@ public class WebSocketServer {
 						acciones.firmar(args[0], args[1], idTramite);
 					}
 				} else {
-					acciones.firmar(args[0], args[1], args[2]);
 				}
+				*/
+				acciones.firmar(args[0], args[1], args[2]);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -250,7 +269,7 @@ public class WebSocketServer {
 				sendMessageToClient ("END");
 			}
 
-			b = new byte[1024];
+			buffer = new byte[1024];
 		}
 		isFirst = false;
 		inputStream.close();
@@ -324,6 +343,8 @@ public class WebSocketServer {
 		if (get.find()) {
 			Matcher match = Pattern.compile("Sec-WebSocket-Key: (.*)").matcher(data);
 			match.find();
+
+
 
 			byte[] response = null;
 			try {
