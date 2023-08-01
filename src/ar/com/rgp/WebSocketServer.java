@@ -23,24 +23,20 @@ import javax.xml.bind.DatatypeConverter;;
 
 public class WebSocketServer {
 
-	// URL al servidor de backend para obtener y subir los documentos
 	public static String backendHOST;
-	// URL al servidor de backend
 	public static String updateUrl;
 	public static Socket clientSocket;
 	private int checkUpdateAfter=20;
 	private int numeroFirma=0;
 	private ServerSocket server;
+	private int portNumber = 9678;
+
 
 	public void start() {
-
-		int portNumber = 9678;
-
 
 		try
 		{
 			server = new ServerSocket(portNumber);
-			System.out.println("servidor activo");
 		}
 		catch (IOException exception)
 		{
@@ -55,7 +51,7 @@ public class WebSocketServer {
 
 			try
 			{
-				clientSocket = server.accept(); // waits until a client connects
+				clientSocket = server.accept();
 			}
 			catch (IOException waitException)
 			{
@@ -86,7 +82,6 @@ public class WebSocketServer {
 				throw new IllegalStateException("Could not connect to client input stream", inputStreamException);
 			}
 
-
 			try
 			{
 				doHandShakeToInitializeWebSocketConnection(inputStream, outputStream);
@@ -95,7 +90,6 @@ public class WebSocketServer {
 			{
 				throw new IllegalStateException("Could not connect to client input stream", handShakeException);
 			}
-
 
 			try
 			{
@@ -175,15 +169,11 @@ public class WebSocketServer {
 
 		bytesRead = inputStream.read(buffer);
 
-		System.out.println(bytesRead);
-		System.out.println(inputStream.toString());
-
 		if (bytesRead != -1) {
 
 			byte rLength = 0;
 			int rMaskIndex = 2;
 			int rDataStart = 0;
-			// b[0] is always text in my case so no need to check;
 			byte data = buffer[1];
 			byte op = (byte) 127;
 			rLength = (byte) (data & op);
@@ -212,22 +202,14 @@ public class WebSocketServer {
 				message[j] = (byte) (buffer[i] ^ masks[j % 4]);
 			}
 
+			AccionesFirmador accionesFirmador = new AccionesFirmador();
 
-			// Convert bytes to string using the appropriate encoding
-			String receivedString = new String(message, "UTF-8");
-
-			// Print the string
-			System.out.println("TEST FRONT: "+receivedString);
-
-			System.out.println(new String(message));
-			AccionesFirmador acciones = new AccionesFirmador();
 			try {
 				String mensaje = new String (message);
 				String args[]=mensaje.split("-##-");
 
-				System.out.println("ENTRANDO A FIRMAR");
-
-				/*String protocol=args[3];
+				/* #region OLD FUNCIONALITY
+				String protocol=args[3];
 				String puerto="80";
 				if (args.length>5 && !args[5].trim().equalsIgnoreCase("") && !args[5].trim().equalsIgnoreCase("0")) {
 					puerto = args[5];
@@ -257,23 +239,19 @@ public class WebSocketServer {
 					}
 				} else {
 				}
-				*/
-				acciones.firmar(args[0], args[1], args[2]);
+
+				#endredion */
+				System.out.println("ENTRANDO A FIRMAR");
+				accionesFirmador.firmar(args[0], args[1], "1");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-				// sendMessageToClient (e.getMessage());
 				WebSocketServer.sendMessageToClient("ERROR: " + e.getLocalizedMessage());
 				RgpMain.showTaskBarMessage("Error firmando", e.getMessage(), MessageType.ERROR);
 			} finally {
 				sendMessageToClient ("END");
 			}
-
-			buffer = new byte[1024];
 		}
-		isFirst = false;
 		inputStream.close();
-		// }
 	}
 	public static void sendMessageToClient(String mensaje) {
 		System.err.println("-----------------------------------" + mensaje);

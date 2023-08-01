@@ -114,6 +114,18 @@
             <artifactId>icepdf-viewer</artifactId>
             <version>6.2.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>org.json</artifactId>
+            <version>chargebee-1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.6</version>
+            <type>jar</type>
+        </dependency>
 
 
         <!-- <dependency> -->

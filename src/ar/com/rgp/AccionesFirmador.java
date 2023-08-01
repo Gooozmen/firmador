@@ -7,6 +7,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Locale;
 
@@ -14,6 +16,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ar.com.rgp.common.validations.ListaMensaje;
 import firmaENG.FirmadorByteArray;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import java.util.Scanner;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import javassist.bytecode.ByteArray;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class AccionesFirmador {
 	private static final boolean debug = true;
@@ -31,6 +50,23 @@ public class AccionesFirmador {
 			System.out.println("Firmar, idTramite: " + idTramite);
 
 		procesarFirma(userId, token, idTramite);
+	}
+
+	protected byte[] parseStringToBytes(String pdfBytes)
+	{
+		String[] byteStrings = pdfBytes.trim().split(" ");
+		byte[] byteArray = new byte[byteStrings.length];
+
+		for(int i= 0; i< byteStrings.length; i++)
+		try{
+			byteArray[i] = Byte.parseByte(byteStrings[i]);
+		}
+		catch (NumberFormatException e)
+		{
+			System.err.println("error while parsing: "+ i +": "+e.getMessage());
+		}
+
+		return byteArray;
 	}
 
 	protected byte[] procesarFirma(String user, String token, String trmId) throws Exception {
@@ -75,16 +111,10 @@ public class AccionesFirmador {
 		byte byt[] = null;
 		try {
 
-			//DESCOMENTAR INICIO
-			//WebSocketServer.sendMessageToClient("VALIDANDO " + trmId);
+			WebSocketServer.sendMessageToClient("VALIDANDO " + trmId);
 			//byt = getPdfFromService(WebSocketServer.backendHOST + "report/getPdfFormulario/" + trmId, token);
-			//WebSocketServer.sendMessageToClient("FIRMANDO");
-			//DESCOMENTAR FIN
-
-			//TRY JUAN
-			Path path = Paths.get("C:\\Users\\jguzm\\Downloads\\EjemploNoFirmado.pdf");
-			byt = Files.readAllBytes(path);
-			//END TRY
+			byt = GetPdf(token);
+			WebSocketServer.sendMessageToClient("FIRMANDO");
 
 			byt = fir.firmar(byt);
 			if (byt == null || (fir.getMensaje() != null && !fir.getMensaje().getTexto().equals("Listo"))) {
@@ -97,10 +127,15 @@ public class AccionesFirmador {
 			//uploadDocFirmado(byt, trmId, token);
 			//DESCOMENTAR FIN
 
-			String outputPath = "C:\\Users\\jguzm\\Downloads\\";
+			String userHome = System.getProperty("user.home");
+
+			// Step 2: Create the Downloads folder path
+			String downloadsFolderPath = userHome + File.separator + "Downloads" + File.separator;
+
+			//String outputPath = "C:\\Users\\jguzm\\Downloads\\";
 			String outputFileName = "pruebaCicloCompletoFirmaVisible.pdf";
 
-			try(FileOutputStream fos = new FileOutputStream(outputPath+outputFileName))
+			try(FileOutputStream fos = new FileOutputStream(downloadsFolderPath+outputFileName))
 			{
 				fos.write(byt);
 			}
@@ -303,5 +338,97 @@ public class AccionesFirmador {
 		httpConn.disconnect();
 		return byt;
 	}
+
+	public byte[] GetPdf(String token) throws IOException {
+
+		disableSSLVerification();
+
+		String url = "https://siigeno.desa.cba.gov.ar/api/CentroDocumentacionDigital/GetDocumentMock";
+
+		byte[] pdfBytes = null;
+
+		try {
+			// Create a URL object
+			URL apiUrl = new URL(url);
+
+			// Open a connection to the URL
+			HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+
+			// Set the request method to GET
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("accept", "*/*");
+			connection.setRequestProperty("Authorization", "Bearer " + token);
+			//connection.connect();
+
+			// Get the response code
+			int responseCode = connection.getResponseCode();
+			System.out.println("CODE "+responseCode);
+			String contentType = connection.getContentType();
+			System.out.println("CONTENT TYPE: "+contentType);
+
+
+			// Check if the response code indicates success (2xx)
+			if (responseCode >= 200 || responseCode < 303) {
+				// Read the response data
+				BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+				String inputLine;
+				StringBuilder responseData = new StringBuilder();
+				while ((inputLine = reader.readLine()) != null) {
+					responseData.append(inputLine);
+				}
+				reader.close();
+
+				pdfBytes = Base64.getDecoder().decode(responseData.toString());
+
+				String outputPath = "C:\\Users\\jguzm\\Downloads\\";
+				String outputFileName = "prueba.pdf";
+
+				try(FileOutputStream fos = new FileOutputStream(outputPath+outputFileName))
+				{
+					fos.write(pdfBytes);
+				}
+
+			} else {
+				System.out.println("Request failed with status code: " + responseCode);
+			}
+			connection.disconnect();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return pdfBytes;
+	}
+
+	private static void disableSSLVerification() {
+		try {
+			// Create a trust manager that trusts all certificates
+			javax.net.ssl.TrustManager[] trustAllCertificates = new javax.net.ssl.TrustManager[]{
+					new javax.net.ssl.X509TrustManager() {
+						public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+							return null;
+						}
+
+						public void checkClientTrusted(
+								java.security.cert.X509Certificate[] certs, String authType) {
+						}
+
+						public void checkServerTrusted(
+								java.security.cert.X509Certificate[] certs, String authType) {
+						}
+					}
+			};
+
+			// Install the trust manager to skip SSL certificate validation
+			javax.net.ssl.SSLContext sc = javax.net.ssl.SSLContext.getInstance("TLS");
+			sc.init(null, trustAllCertificates, new java.security.SecureRandom());
+			javax.net.ssl.HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(
+					(hostname, session) -> true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 }

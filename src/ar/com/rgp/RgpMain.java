@@ -28,18 +28,7 @@ public class RgpMain {
 		charset.setAccessible(true);
 		charset.set(null,null);
 
-		/*
-		try {
-			SocketServer socketServer = new SocketServer();
-			socketServer.StartServer();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		*/
-
-		/*test JUAN FIRMAR EXITOSO
+		/*TEST JUAN FIRMAR EXITOSO
 		AccionesFirmador acciones = new AccionesFirmador();
 		try {
 			acciones.procesarFirma("DEBANNE DIEGO OSCAR", "token", "101092109");
@@ -47,8 +36,6 @@ public class RgpMain {
 			throw new RuntimeException(e);
 		}
 		END TEST*/
-
-		//REGION COMENTADA
 
 		try {
 			if (args != null && args.length >= 1 && (args[0].equals("NO_USER"))) {

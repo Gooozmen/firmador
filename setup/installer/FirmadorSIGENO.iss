@@ -7,6 +7,7 @@
 ;#define MyAppPublisher "Registro de la propiedad de la provincia de Córdoba"
 #define MyAppPublisher "Escribania de la provincia de Córdoba"
 ;#define MyAppURL "https://sir-aut.cba.gov.ar/sir-mew/"
+;#define MyAppURL "https://sir-aut.cba.gov.ar/sir-mew/"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -17,14 +18,14 @@ AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-AppPublisherURL={#MyAppURL}
-AppSupportURL={#MyAppURL}
-AppUpdatesURL={#MyAppURL}
-DefaultDirName={sd}\FirmadorRGP
+;AppPublisherURL={#MyAppURL}
+;AppSupportURL={#MyAppURL}
+;AppUpdatesURL={#MyAppURL}
+DefaultDirName={sd}\FirmadorSIG
 DisableDirPage=no
 DefaultGroupName={#MyAppName}
 OutputDir=C:\Temp\installer
-OutputBaseFilename=instalador_rgp
+OutputBaseFilename=instalador_sig
 Compression=lzma2
 SolidCompression=yes
 ;SetupIconFile=rgp.ico
@@ -59,16 +60,16 @@ Source: "C:\Firmador\jre64\*";  DestDir: "{app}"; Flags: "recursesubdirs"; Check
 ;Source: "C:\programacion\RGP\firmador\setup\opcionales\jre64\*";  DestDir: "{app}"; Flags: "recursesubdirs"; Check: Is64BitInstallMode
 
 [Icons]
-Name: "{group}\Iniciar RGP"; Filename: "{app}\firmador.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"
+Name: "{group}\Iniciar Firmador"; Filename: "{app}\firmador.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\sigeno.ico"
 ; Name: "{group}\Iniciar RGP - TEST"; Filename: "{app}\firmador-TEST.cmd"; Tasks: accesotest; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"
 ; Name: "{group}\Iniciar RGP - UAT"; Filename: "{app}\firmador-UAT.cmd"; Tasks: accesouat; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"
-Name: "{group}\Desinstalar RGP"; Filename: "{uninstallexe}";  IconFilename: "{app}\rgp.ico"
-Name: "{commondesktop}\Iniciar RGP"; Filename: "{app}\firmador.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"; Tasks: desktopicon
+Name: "{group}\Desinstalar Firmador"; Filename: "{uninstallexe}";  IconFilename: "{app}\sigeno.ico"
+Name: "{commondesktop}\Iniciar Firmador"; Filename: "{app}\firmador.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\sigeno.ico"; Tasks: desktopicon
 ; Name: "{commondesktop}\Iniciar RGP - DESA"; Filename: "{app}\firmador-DESA.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"; Tasks: "desktopicon accesodesa"
 ; Name: "{commondesktop}\Iniciar RGP - TEST"; Filename: "{app}\firmador-TEST.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"; Tasks: "desktopicon accesotest"
 ; Name: "{commondesktop}\Iniciar RGP - UAT"; Filename: "{app}\firmador-UAT.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"; Tasks: "desktopicon accesouat"
 ;Name: "{userstartup}\Iniciar RGP"; Filename: "{app}\firmador.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"
-Name: "{commonstartup}\Iniciar RGP"; Filename: "{app}\firmador.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\rgp.ico"
+Name: "{commonstartup}\Iniciar Firmador"; Filename: "{app}\firmador.cmd"; WorkingDir: "{app}"; Flags: "runminimized"; IconFilename: "{app}\sigeno.ico"
 
 [Languages]
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
