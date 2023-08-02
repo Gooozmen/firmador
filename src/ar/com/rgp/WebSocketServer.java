@@ -241,6 +241,7 @@ public class WebSocketServer {
 				}
 
 				#endredion */
+
 				System.out.println("ENTRANDO A FIRMAR");
 				accionesFirmador.firmar(args[0], args[1], "1");
 			} catch (Exception e) {
